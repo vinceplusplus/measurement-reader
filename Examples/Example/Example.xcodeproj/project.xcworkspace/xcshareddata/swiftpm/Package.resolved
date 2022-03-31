@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "measurement-reader",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:vinceplusplus/measurement-reader.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "65976a0796fb57064de19ce751d546a08b1ae2fe"
+      }
+    }
+  ],
+  "version" : 2
+}
