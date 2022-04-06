@@ -375,8 +375,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vinceplusplus/measurement-reader.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.99.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
