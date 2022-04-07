@@ -55,8 +55,8 @@ class StateContainer<T> {
 }
 
 final class MeasurementReaderTests: XCTestCase {
-  func testSizeReader() {
-    let view = SizeReader { proxy in
+  func testSimpleSizeReader() {
+    let view = SimpleSizeReader { proxy in
       HStack {
         VStack {
           Text("Top aligned")
@@ -64,14 +64,14 @@ final class MeasurementReaderTests: XCTestCase {
         }
         .frame(minHeight: proxy.maxHeight(), alignment: .top)
         .background(Color.red)
-        
+
         VStack {
           Text("Bottom aligned")
             .measure(proxy)
         }
         .frame(minHeight: proxy.maxHeight(), alignment: .bottom)
         .background(Color.green)
-        
+
         VStack {
           Text("Multiline text\nLine 1\nLine 2\nLine 3\nLine 4")
             .measure(proxy)
@@ -82,10 +82,10 @@ final class MeasurementReaderTests: XCTestCase {
       .foregroundColor(Color.white)
     }
       .frame(width: 300, height: 200)
-    
+
     assertSnapshot(matching: view, as: .image)
   }
-  
+
   func testSimpleMeasurementReader() {
     enum Field {
       case no
@@ -101,7 +101,7 @@ final class MeasurementReaderTests: XCTestCase {
       ("11", "Angela Herron", "4999 Valley Lane Austin, TX"),
       ("13", "Some really really long name", "2388 Collins Street Tampa, FL"),
     ]
-    
+
     let view = SimpleMeasurementReader<Field> { proxy in
       VStack(spacing: 8) {
         ForEach(data, id: \.no) { person in
@@ -111,13 +111,13 @@ final class MeasurementReaderTests: XCTestCase {
                 .measure(proxy, .no)
             }
             .frame(minWidth: proxy.maxWidth(.no), alignment: .trailing)
-            
+
             VStack {
               Text("\(person.name)")
                 .measure(proxy, .name)
             }
             .frame(minWidth: proxy.maxWidth(.name), alignment: .leading)
-            
+
             Text("\(person.address)")
               .frame(maxWidth: .infinity, alignment: .leading)
           }
@@ -129,7 +129,7 @@ final class MeasurementReaderTests: XCTestCase {
 
     assertSnapshot(matching: view, as: .image)
   }
-  
+
   func testSimpleTableReader() {
     enum Field {
       case id
@@ -165,13 +165,13 @@ final class MeasurementReaderTests: XCTestCase {
       ("8", "Pizza", "100 g", "266 kcal", "10 g", "17 mg", "598 mg", "33 g", "11 g"),
       ("9", "Vegetable", "100 g", "65 kcal", "0.2 g", "0 mg", "35 mg", "13 g", "2.9 g"),
     ]
-    
-    let view = SizeReader { containerProxy in
+
+    let view = SimpleSizeReader { containerProxy in
       VStack(spacing: 0) {
         Color.clear
           .frame(height: 0)
           .measure(containerProxy)
-        
+
         ScrollView {
           SimpleTableReader<Field>(
             maxWidth: (containerProxy.maxWidth() ?? 0) - 16 * 2,
@@ -186,21 +186,21 @@ final class MeasurementReaderTests: XCTestCase {
                       .measure(proxy, .name)
                   }
                   .frame(minWidth: proxy.columnWidth(.name), alignment: .leading)
-                  
+
                   VStack {
                     Text("\(food.portion)")
                       .padding(.horizontal, 8)
                       .measure(proxy, .portion)
                   }
                   .frame(minWidth: proxy.columnWidth(.portion), alignment: .trailing)
-                  
+
                   VStack {
                     Text("\(food.calories)")
                       .padding(.horizontal, 8)
                       .measure(proxy, .calories)
                   }
                   .frame(minWidth: proxy.columnWidth(.calories), alignment: .trailing)
-                  
+
                   VStack {
                     Text("\(food.fat)")
                       .padding(.horizontal, 8)
@@ -222,7 +222,7 @@ final class MeasurementReaderTests: XCTestCase {
 
     assertSnapshot(matching: view, as: .image)
   }
-  
+
   func testSimpleTableReaderWithNotEnoughWidth() {
     let view = SimpleTableReader<Int>(maxWidth: 300) { proxy in
       VStack {
@@ -247,8 +247,8 @@ final class MeasurementReaderTests: XCTestCase {
       .frame(width: 500, height: 100)
     assertSnapshot(matching: view, as: .image)
   }
-  
-  func testSizeReaderForSizeReporting() {
+
+  func testSimpleSizeReaderForSizeReporting() {
     struct TestView: View {
       @Binding var sizes: [Untagged: CGSize]
       @Binding var size: CGSize
@@ -256,7 +256,7 @@ final class MeasurementReaderTests: XCTestCase {
       @Binding var height: CGFloat
 
       var body: some View {
-        SizeReader { proxy in
+        SimpleSizeReader { proxy in
           HStack(spacing: 0) {
             Text("just one really long text")
               .measure(proxy)
@@ -287,7 +287,7 @@ final class MeasurementReaderTests: XCTestCase {
           .frame(width: 500, height: 100)
       }
     }
-    
+
     let sizes = StateContainer<[Untagged: CGSize]>([:])
     let size = StateContainer<CGSize>(.zero)
     let width = StateContainer<CGFloat>(0)
@@ -307,7 +307,7 @@ final class MeasurementReaderTests: XCTestCase {
     XCTAssertEqual(width.state, 175.666666, accuracy: 0.000001)
     XCTAssertEqual(height.state, 108.333333, accuracy: 0.000001)
   }
-  
+
   func testSimpleMeasurementReaderForSizeReporting() {
     struct TestView: View {
       @Binding var sizes: [Int: CGSize]
@@ -375,7 +375,7 @@ final class MeasurementReaderTests: XCTestCase {
           .frame(width: 500, height: 100)
       }
     }
-    
+
     let sizes = StateContainer<[Int: CGSize]>([:])
     let size0 = StateContainer<CGSize>(.zero)
     let size1 = StateContainer<CGSize>(.zero)
@@ -407,7 +407,7 @@ final class MeasurementReaderTests: XCTestCase {
     XCTAssertEqual(width1.state, 202, accuracy: 0.000001)
     XCTAssertEqual(height1.state, 20.333333, accuracy: 0.000001)
   }
-  
+
   func testSimpleMeasurementReaderWithMerging() {
     enum Shape {
       case wideRectangle
@@ -445,7 +445,7 @@ final class MeasurementReaderTests: XCTestCase {
           .frame(width: 600, height: 600)
       }
     }
-    
+
     let viewModel = ViewModel()
     let sizes = StateContainer<[Int: CGSize]>([:])
     let viewHost = ViewHost {
@@ -465,7 +465,7 @@ final class MeasurementReaderTests: XCTestCase {
     viewModel.shape2 = .wideRectangle
     viewModel.shape3 = .wideRectangle
     viewHost.layoutIfNeeded()
-    
+
     XCTAssertEqual(sizes.state[0]?.width ?? 0, 112, accuracy: 0.000001)
     XCTAssertEqual(sizes.state[0]?.height ?? 0, 306.333333, accuracy: 0.000001)
     XCTAssertEqual(sizes.state[1]?.width ?? 0, 112, accuracy: 0.000001)
@@ -473,7 +473,7 @@ final class MeasurementReaderTests: XCTestCase {
     XCTAssertEqual(sizes.state[2]?.width ?? 0, 112, accuracy: 0.000001)
     XCTAssertEqual(sizes.state[2]?.height ?? 0, 20.333333, accuracy: 0.000001)
   }
-  
+
   func testSimpleTableReaderForSizeReporting() {
     struct TestView: View {
       @Binding var sizes: [Int: CGSize]
@@ -553,7 +553,7 @@ final class MeasurementReaderTests: XCTestCase {
           .frame(width: 500, height: 200)
       }
     }
-    
+
     let sizes = StateContainer<[Int: CGSize]>([:])
     let size0 = StateContainer<CGSize>(.zero)
     let size1 = StateContainer<CGSize>(.zero)
@@ -591,13 +591,13 @@ final class MeasurementReaderTests: XCTestCase {
     XCTAssertEqual(columnWidth0.state, 259.333333, accuracy: 0.000001)
     XCTAssertEqual(columnWidth1.state, 240.666666, accuracy: 0.000001)
   }
-  
-  func testSizeReaderForAutoScoping() {
+
+  func testSimpleSizeReaderForAutoScoping() {
     struct TestView: View {
       @Binding var widths: [CGFloat?]
 
       var body: some View {
-        SizeReader { proxy in
+        SimpleSizeReader { proxy in
           VStack {
             Color.clear
               .frame(width: 0, height: 1)
@@ -605,9 +605,9 @@ final class MeasurementReaderTests: XCTestCase {
               .onChange(of: proxy.maxWidth()) {
                 widths[0] = $0
               }
-            // NOTE: currently it supports up to 32 auto scopes, so if we treat into the 33rd here, it would loop back to the 0th one
-            ForEach(1..<33) { i in
-              SizeReader { nestedProxy in
+            // NOTE: currently it supports up to 32 auto scopes, so if we tread into the 32nd and the 64th here, it would bleed back to the 0th one
+            ForEach(1..<65) { i in
+              SimpleSizeReader { nestedProxy in
                 Color.clear
                   .frame(width: .init(i), height: 1)
                   .measure(nestedProxy)
@@ -622,21 +622,39 @@ final class MeasurementReaderTests: XCTestCase {
       }
     }
 
-    let widths = StateContainer<[CGFloat?]>((0..<33).map { _ in nil })
+    let widths = StateContainer<[CGFloat?]>((0..<65).map { _ in nil })
     _ = ViewHost {
       TestView(
         widths: widths.makeBinding()
       )
     }
-    for i in 1..<32 {
+    for i in 1..<65 {
       XCTAssertEqual(widths.state[i], CGFloat(i))
     }
-    // NOTE: this is the expected behavior. although the wanted behavior is to produce 0.0 for the 0th view
-    //       and 32.0 for the 32th view here, the 32 auto scopes limit takes the 32th one back to the 0th
-    //       one. so the 2 will be using the same auto scope and hence the same preference key type, and it
-    //       leads to taking the max of the 2
-    XCTAssertEqual(widths.state[0], 32)
-    XCTAssertEqual(widths.state[32], 32)
+    // NOTE: this is the expected behavior. although the wanted behavior is to produce 0.0 for the 0th view,
+    //       the 32 auto scopes limit takes the 32nd and 64th ones back to the 0th
+    //       one. so the 3 will be using the same auto scope and hence the same preference key type, and it
+    //       leads to taking the max of the 3
+    XCTAssertEqual(widths.state[0], 64)
+  }
+
+  func testFoo() {
+    _ = ViewHost {
+      ScopedMeasurementReader<Int, Untagged> { proxy in
+        VStack {
+          ZStack {}
+            .frame(width: 10, height: 0)
+            .measure(proxy)
+          ZStack {
+            ScopedMeasurementReader<Int, Untagged> { proxy in
+              ZStack {}
+                .frame(width: 0, height: 10)
+                .measure(proxy)
+            }
+          }
+        }
+      }
+    }
   }
 }
 

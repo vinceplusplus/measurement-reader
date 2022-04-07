@@ -1,5 +1,7 @@
 import SwiftUI
 
+fileprivate struct TableScope {}
+
 public struct TableReader<Scope, Tag>: View where Tag: Hashable {
   private let content: () -> AnyView
   
@@ -14,9 +16,14 @@ public struct TableReader<Scope, Tag>: View where Tag: Hashable {
     Content: View
   {
     self.content = {
-      .init(MeasurementReader<Scope, Tag>(version: version, reducer: reducer) { measurementProxy in
-        content(.init(maxWidth: maxWidth, measurementProxy: measurementProxy, pads: pads))
-      })
+      .init(
+        MeasurementReader<ScopeChain<Scope, TableScope>, Tag>(
+          version: version,
+          reducer: reducer
+        ) { measurementProxy in
+          content(.init(maxWidth: maxWidth, measurementProxy: measurementProxy, pads: pads))
+        }
+      )
     }
   }
   

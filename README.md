@@ -13,11 +13,12 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [`SizeReader`](#sizereader)
+  - [`SimpleSizeReader`](#simplesizereader)
   - [`SimpleMeasurementReader`](#simplemeasurementreader)
   - [`SimpleTableReader`](#simpletablereader)
 - [Reference](#reference)
-  - [`SizeReader`](#sizereader-1)
+  - [`SimpleSizeReader`](#simplesizereader-1)
+  - [`SizeReader`](#sizereader)
   - [`SimpleMeasurementReader`](#simplemeasurementreader-1)
   - [`MeasurementReader`](#measurementreader)
   - [`SimpleTableReader`](#simpletablereader-1)
@@ -47,9 +48,9 @@ To install through Swift Package Manager, add the following as package dependenc
 
 ## Usage
 
-### `SizeReader`
+### `SimpleSizeReader`
 
-To measure the max height and apply back to multiple views, `SizeReader` could be used
+To measure the max height and apply back to multiple views, `SimpleSizeReader` could be used
 
 <img width="330" alt="same height" src="docs/images/same-height.png" />
 
@@ -58,7 +59,7 @@ import MeasurementReader
 
 // ...
 
-SizeReader { proxy in
+SimpleSizeReader { proxy in
   HStack {
     VStack {
       Text("Top aligned")
@@ -97,7 +98,7 @@ SizeReader { proxy in
 
 ### `SimpleMeasurementReader`
 
-While `SizeReader` can only measure only a single group of views,
+While `SimpleSizeReader` can only measure only a single group of views,
 `SimpleMeasurementReader` can do for multiple groups of views
 
 <img width="339" alt="same width" src="docs/images/same-width.png" />
@@ -164,7 +165,7 @@ The fix would be to allow the measurements to be done again without previous mea
 previous measurements so that would allow `minWidth` to start with `nil` again
 
 ```swift
-return SizeReader { containerProxy in           // use a separate `SizeReader`
+return SimpleSizeReader { containerProxy in           // use a separate `SizeReader`
   VStack(spacing: 0) {
     Color.clear
       .frame(height: 0)
@@ -202,7 +203,7 @@ return SizeReader { containerProxy in           // use a separate `SizeReader`
 <img width="339" alt="same width" src="docs/images/same-width.png" />
 
 The result is the same as when the above example was first run in portrait mode. Using `GeometryReader`
-in place of `SizeReader` will work too, but here we are just demonstrating the versatility of the library
+in place of `SimpleSizeReader` will work too, but here we are just demonstrating the versatility of the library
 
 ### `SimpleTableReader`
 
@@ -216,7 +217,7 @@ To achieve the following layouts in both portrait and landscape (more fields) mo
 <img width="900" alt="table-portrait" src="docs/images/table-landscape.png" />
 
 ```swift
-return SizeReader { containerProxy in
+return SimpleSizeReader { containerProxy in
   VStack(spacing: 0) {
     Color.clear
       .frame(height: 0)
@@ -274,16 +275,30 @@ return SizeReader { containerProxy in
 }
 ```
 
-- The `SizeReader` is for determining what width we can allocate to the table, `GeometryReader` could be used instead though
+- The `SimpleSizeReader` is for determining what width we can allocate to the table, `GeometryReader` could be used instead though
 - Some arithmetic needs to be carried out to account for things like padding and spacing
 - `version: containerProxy.maxWidth()` so the measurements of the extra fields in landscape mode won't stay to affect portrait layout
 - `proxy.columnWidth(.name)`, etc to get column width, `.maxWidth(...)`, `.maxHeight(...)`, `.maxSize(...)`, etc are still available though
 
 ## Reference
 
-### `SizeReader`
+### `SimpleSizeReader`
 
 A view to measure one group of views
+
+```swift
+SimpleSizeReader(version: ..., reducer: ...) { proxy in
+  ...
+}
+```
+
+- `version`, [version](#version), the default is `DefaultMeasurementVersion()`
+- `reducer`, [MeasurementReducer](#measurementreducer), the default is `.replace`
+- `proxy`, [MeasurementProxy](#measurementproxy)
+
+### `SizeReader`
+
+Similar to `SimpleSizeReader` but takes a `Scope` type. Due to how preference key works, the only identifying factor is the type, a different given `Scope` will help in situations like nesting. The underlying implementation of `SizeReaderReader` already uses `SafelyScopedMeasurementReader` which has 32 built in rotating scopes, an explicitly given `Scope` will help not running into any collision which `SimpleSizeReader` might still have a chance to run into
 
 ```swift
 SizeReader(version: ..., reducer: ...) { proxy in
@@ -294,7 +309,6 @@ SizeReader(version: ..., reducer: ...) { proxy in
 - `version`, [version](#version), the default is `DefaultMeasurementVersion()`
 - `reducer`, [MeasurementReducer](#measurementreducer), the default is `.replace`
 - `proxy`, [MeasurementProxy](#measurementproxy)
-- Uses `SimpleMeasurementReader` under the hood
 
 ### `SimpleMeasurementReader`
 
@@ -313,8 +327,6 @@ SimpleMeasurementReader<Tag>(version: ..., reducer: ...) { proxy in
 - uses `MeasurementReader` under the hood
 
 ### `MeasurementReader`
-
-Similar to `SimpleMeasurementReader` but takes a `Scope` type. Due to how preference key works, the only identifying factor is the type, a different given `Scope` will help in situations like nesting. The underlying implementation of `MeasurementReader` already uses `SafelyScopedMeasurementReader` which has 32 built in rotating scopes, an explicit given `Scope` will help not running into any collision which `SimpleMeasurementReader` might still have a rare chance to run into
 
 ```swift
 MeasurementReader<Scope, Tag>(version: ..., reducer: ...) { proxy in

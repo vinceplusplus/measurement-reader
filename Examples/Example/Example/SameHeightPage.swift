@@ -10,7 +10,7 @@ import MeasurementReader
 
 struct SameHeightPage: View {
   var body: some View {
-    SizeReader { proxy in
+    SimpleSizeReader { proxy in
       HStack {
         VStack {
           Text("Top aligned")

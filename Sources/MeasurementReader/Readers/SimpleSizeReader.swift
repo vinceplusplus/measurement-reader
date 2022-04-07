@@ -1,8 +1,8 @@
 import SwiftUI
 
-fileprivate struct SizeScope {}
+fileprivate struct Unscoped {}
 
-public struct SizeReader<Scope>: View {
+public struct SimpleSizeReader: View {
   private let content: () -> AnyView
   
   public init<Content>(
@@ -14,7 +14,7 @@ public struct SizeReader<Scope>: View {
     Content: View
   {
     self.content = {
-      .init(MeasurementReader<ScopeChain<Scope, SizeScope>, Untagged>(version: version, reducer: reducer) {
+      .init(SizeReader<Unscoped>(version: version, reducer: reducer) {
         content($0)
       })
     }

@@ -25,7 +25,7 @@ struct SameWidthWithVersionPage: View {
       ("13", "Some really really long name", "2388 Collins Street Tampa, FL"),
     ]
     
-    return SizeReader { containerProxy in
+    return SimpleSizeReader { containerProxy in
       VStack(spacing: 0) {
         Color.clear
           .frame(height: 0)

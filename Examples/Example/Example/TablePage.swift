@@ -48,7 +48,7 @@ struct TablePage: View {
       ("9", "Vegetable", "100 g", "65 kcal", "0.2 g", "0 mg", "35 mg", "13 g", "2.9 g"),
     ]
     
-    return SizeReader { containerProxy in
+    return SimpleSizeReader { containerProxy in
       VStack(spacing: 0) {
         Color.clear
           .frame(height: 0)
