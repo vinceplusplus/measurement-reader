@@ -3,10 +3,10 @@
     {
       "identity" : "measurement-reader",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:vinceplusplus/measurement-reader.git",
+      "location" : "https://github.com/vinceplusplus/measurement-reader.git",
       "state" : {
-        "revision" : "7bb14a8d4b066a9505dc6059b922947ccd860ac6",
-        "version" : "0.99.3"
+        "branch" : "v2.0-alpha.1",
+        "revision" : "4bab17cfdf1304d80755b9fd8b141aaee224bd88"
       }
     }
   ],
