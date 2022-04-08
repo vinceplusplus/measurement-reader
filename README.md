@@ -298,7 +298,7 @@ SimpleSizeReader(version: ..., reducer: ...) { proxy in
 
 ### `SizeReader`
 
-Similar to `SimpleSizeReader` but takes a `Scope` type. Due to how preference key works, the only identifying factor is the type, a different given `Scope` will help in situations like nesting. The underlying implementation of `SizeReaderReader` already uses `SafelyScopedMeasurementReader` which has 32 built in rotating scopes, an explicitly given `Scope` will help not running into any collision which `SimpleSizeReader` might still have a chance to run into
+Similar to `SimpleSizeReader` but takes a `Scope` type. A uniquely given `Scope` will help making sure the perference key value will only concern the said scope 
 
 ```swift
 SizeReader(version: ..., reducer: ...) { proxy in

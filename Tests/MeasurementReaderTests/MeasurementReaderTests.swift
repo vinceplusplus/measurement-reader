@@ -592,8 +592,13 @@ final class MeasurementReaderTests: XCTestCase {
     XCTAssertEqual(columnWidth1.state, 240.666666, accuracy: 0.000001)
   }
 
-  func testSimpleSizeReaderForAutoScoping() {
+  func testSimpleSizeReaderForAutoScopingAndBinning() {
+    // NOTE: while auto scoping will help using a different preference key type, binning will help filtering
+    //       for the correct associated bin even though we run into an auto scope collision
+    let scopeTestCount = 1024
+    
     struct TestView: View {
+      let scopeTestCount: Int
       @Binding var widths: [CGFloat?]
 
       var body: some View {
@@ -605,8 +610,7 @@ final class MeasurementReaderTests: XCTestCase {
               .onChange(of: proxy.maxWidth()) {
                 widths[0] = $0
               }
-            // NOTE: currently it supports up to 32 auto scopes, so if we tread into the 32nd and the 64th here, it would bleed back to the 0th one
-            ForEach(1..<65) { i in
+            ForEach(1..<scopeTestCount, id: \.self) { i in
               SimpleSizeReader { nestedProxy in
                 Color.clear
                   .frame(width: .init(i), height: 1)
@@ -622,20 +626,16 @@ final class MeasurementReaderTests: XCTestCase {
       }
     }
 
-    let widths = StateContainer<[CGFloat?]>((0..<65).map { _ in nil })
+    let widths = StateContainer<[CGFloat?]>((0..<scopeTestCount).map { _ in nil })
     _ = ViewHost {
       TestView(
+        scopeTestCount: scopeTestCount,
         widths: widths.makeBinding()
       )
     }
-    for i in 1..<65 {
+    for i in 0..<scopeTestCount {
       XCTAssertEqual(widths.state[i], CGFloat(i))
     }
-    // NOTE: this is the expected behavior. although the wanted behavior is to produce 0.0 for the 0th view,
-    //       the 32 auto scopes limit takes the 32nd and 64th ones back to the 0th
-    //       one. so the 3 will be using the same auto scope and hence the same preference key type, and it
-    //       leads to taking the max of the 3
-    XCTAssertEqual(widths.state[0], 64)
   }
 
   func testFoo() {

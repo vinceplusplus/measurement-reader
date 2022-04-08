@@ -1,10 +1,12 @@
 import SwiftUI
 
 public struct ScopedMeasurementMeasureModifier<Scope, Tag>: ViewModifier where Tag: Hashable {
+  public let binID: Int
   public let version: AnyHashable
   public let tag: Tag
 
-  internal init(version: AnyHashable, tag: Tag) {
+  internal init(binID: Int, version: AnyHashable, tag: Tag) {
+    self.binID = binID
     self.version = version
     self.tag = tag
   }
@@ -16,7 +18,7 @@ public struct ScopedMeasurementMeasureModifier<Scope, Tag>: ViewModifier where T
           Color.clear
             .preference(
               key: ScopedMeasurementPreferenceKey<Scope, Tag>.self,
-              value: .init(version: version, maxSizes: [tag: proxy.size])
+              value: [binID: .init(version: version, maxSizes: [tag: proxy.size])]
             )
         }
       )

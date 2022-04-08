@@ -1,16 +1,18 @@
 import SwiftUI
 
 public struct ScopedMeasurementProxy<Scope, Tag> where Tag: Hashable {
+  public let binID: Int
   public let version: AnyHashable
   public let maxSizes: [Tag: CGSize]
 
-  internal init(version: AnyHashable, maxSizes: [Tag : CGSize]) {
+  internal init(binID: Int, version: AnyHashable, maxSizes: [Tag : CGSize]) {
+    self.binID = binID
     self.version = version
     self.maxSizes = maxSizes
   }
 
   public func measure(_ tag: Tag) -> ScopedMeasurementMeasureModifier<Scope, Tag> {
-    .init(version: version, tag: tag)
+    .init(binID: binID, version: version, tag: tag)
   }
   
   public func maxSize(_ tag: Tag) -> CGSize? {

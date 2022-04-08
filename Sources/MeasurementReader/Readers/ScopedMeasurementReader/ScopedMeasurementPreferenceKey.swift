@@ -1,33 +1,37 @@
 import SwiftUI
 
 internal struct ScopedMeasurementPreferenceKey<Scope, Tag>: PreferenceKey where Tag: Hashable {
-  static var defaultValue: Value {
-    .init(
-      version: DefaultInitialMeasurementVersion(),
-      maxSizes: [:]
-    )
-  }
+  static var defaultValue: Value { [:] }
   
   static func reduce(value: inout Value, nextValue getNextValue: () -> Value) {
     let nextValue = getNextValue()
     
-    value.version = nextValue.version != .init(DefaultInitialMeasurementVersion())
-    ? nextValue.version
-    : value.version
-    
-    for (nextTag, nextSize) in nextValue.maxSizes {
-      let currentSize = value.maxSizes[nextTag, default: nextSize]
-      value.maxSizes[nextTag] = .init(
-        width: max(nextSize.width, currentSize.width),
-        height: max(nextSize.height, currentSize.height)
+    func updateBin(_ bin: inout Bin, with newBin: Bin) {
+      bin.version = newBin.version != .init(DefaultInitialMeasurementVersion())
+      ? newBin.version
+      : bin.version
+      
+      for (tag, newSize) in newBin.maxSizes {
+        let currentSize = bin.maxSizes[tag, default: newSize]
+        bin.maxSizes[tag] = .init(
+          width: max(newSize.width, currentSize.width),
+          height: max(newSize.height, currentSize.height)
+        )
+      }
+    }
+    for (binID, newBin) in nextValue {
+      updateBin(
+        &value[binID, default: .init(version: DefaultInitialMeasurementVersion(), maxSizes: [:])],
+        with: newBin
       )
     }
   }
 }
 
 internal extension ScopedMeasurementPreferenceKey {
-  struct Value: Equatable {
+  struct Bin: Equatable {
     var version: AnyHashable
     var maxSizes: [Tag: CGSize]
   }
+  typealias Value = [Int: Bin]
 }
