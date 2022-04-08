@@ -4,13 +4,9 @@ internal struct ScopedMeasurementPreferenceKey<Scope, Tag>: PreferenceKey where 
   static var defaultValue: Value { [:] }
   
   static func reduce(value: inout Value, nextValue getNextValue: () -> Value) {
-    let nextValue = getNextValue()
-    
     func updateBin(_ bin: inout Bin, with newBin: Bin) {
-      bin.version = newBin.version != .init(DefaultInitialMeasurementVersion())
-      ? newBin.version
-      : bin.version
-      
+      // NOTE: if there is a new bin, it is always an initialized one (non empty)
+      bin.version = newBin.version
       for (tag, newSize) in newBin.maxSizes {
         let currentSize = bin.maxSizes[tag, default: newSize]
         bin.maxSizes[tag] = .init(
@@ -19,6 +15,9 @@ internal struct ScopedMeasurementPreferenceKey<Scope, Tag>: PreferenceKey where 
         )
       }
     }
+    
+    let nextValue = getNextValue()
+    
     for (binID, newBin) in nextValue {
       updateBin(
         &value[binID, default: .init(version: DefaultInitialMeasurementVersion(), maxSizes: [:])],
