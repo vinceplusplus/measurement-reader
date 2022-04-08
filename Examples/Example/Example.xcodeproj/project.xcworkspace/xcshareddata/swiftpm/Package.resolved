@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vinceplusplus/measurement-reader.git",
       "state" : {
-        "branch" : "v2.1-alpha.1",
-        "revision" : "7b9f0baa260124fb5857dbf49e75784f970d6c7c"
+        "branch" : "v2.1.1-alpha.1",
+        "revision" : "7499999ef365bf4a9c6779b77135f608d4af3324"
       }
     }
   ],
