@@ -40,7 +40,7 @@ https://github.com/vinceplusplus/measurement-reader
 
 To install through Swift Package Manager, add the following as package dependency and target dependency respectively
 ```
-.package(url: "https://github.com/vinceplusplus/measurement-reader", from: "1.0.0")
+.package(url: "https://github.com/vinceplusplus/measurement-reader", from: "2.1.1")
 ```
 ```
 .product(name: "MeasurementReader", package: "measurement-reader")
