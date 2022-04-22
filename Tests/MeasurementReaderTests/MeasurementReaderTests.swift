@@ -637,25 +637,6 @@ final class MeasurementReaderTests: XCTestCase {
       XCTAssertEqual(widths.state[i], CGFloat(i))
     }
   }
-
-  func testFoo() {
-    _ = ViewHost {
-      ScopedMeasurementReader<Int, Untagged> { proxy in
-        VStack {
-          ZStack {}
-            .frame(width: 10, height: 0)
-            .measure(proxy)
-          ZStack {
-            ScopedMeasurementReader<Int, Untagged> { proxy in
-              ZStack {}
-                .frame(width: 0, height: 10)
-                .measure(proxy)
-            }
-          }
-        }
-      }
-    }
-  }
 }
 
 #endif
